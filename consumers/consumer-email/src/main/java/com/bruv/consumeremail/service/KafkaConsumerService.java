@@ -10,19 +10,18 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-/**
- * 
- * Consumir mensagens do tópico ECOMMERCE_ENVIO_EMAIL
- * 
- */
+public class KafkaConsumerService {
 
-public class EnvioEmailService {
+    private final KafkaConsumer<String, String> consumer;
+    private final ConsumerFunction parse;
 
-    public void enviaEmail() {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(properties());
-        
-        consumer.subscribe(Collections.singletonList("ECOMMERCE_ENVIO_EMAIL"));
+    public KafkaConsumerService(String topico, ConsumerFunction parse) {
+        this.parse = parse;
+        this.consumer = new KafkaConsumer<String, String>(properties());
+        consumer.subscribe(Collections.singletonList(topico));
+    }
 
+    public void run() {
         while(true) {
 
             try {
@@ -35,20 +34,11 @@ public class EnvioEmailService {
 
             if(!records.isEmpty()) {
                 System.out.println("--------------------------------------------------");
+                //Como a config. max poll está 1, então sempre no máximo vai encontrar por vez.
                 System.out.println("Encontrei " + records.count() + " records");
 
                 for(ConsumerRecord<String, String> record : records) {
-                    System.out.println("Enviando email");
-                    System.out.println("key: " + record.key());
-                    System.out.println("value: " + record.value());
-                    System.out.println("partition: " + record.partition());
-                    System.out.println("offset: " + record.offset());
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("Email enviado");
+                    this.parse.consumir(record);
                 }
             }
         }
@@ -60,7 +50,8 @@ public class EnvioEmailService {
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, EnvioEmailService.class.getSimpleName());
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, EnvioEmailConsumerService.class.getSimpleName());
+        properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
 
         return properties;
     }

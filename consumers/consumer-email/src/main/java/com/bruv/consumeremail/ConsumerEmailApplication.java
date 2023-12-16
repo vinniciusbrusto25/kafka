@@ -3,7 +3,7 @@ package com.bruv.consumeremail;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.bruv.consumeremail.service.EnvioEmailService;
+import com.bruv.consumeremail.service.EnvioEmailConsumerService;
 
 @SpringBootApplication
 public class ConsumerEmailApplication {
@@ -11,7 +11,7 @@ public class ConsumerEmailApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ConsumerEmailApplication.class, args);
 
-		EnvioEmailService envioEmailService = new EnvioEmailService();
+		EnvioEmailConsumerService envioEmailService = new EnvioEmailConsumerService();
 
 		envioEmailService.enviaEmail();
 	}

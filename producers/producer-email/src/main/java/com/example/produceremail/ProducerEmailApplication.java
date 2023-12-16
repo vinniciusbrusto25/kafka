@@ -13,7 +13,7 @@ public class ProducerEmailApplication {
 
 		EnvioEmailService envioEmailService = new EnvioEmailService();
 
-		for(int i=0; i<10; i++) {
+		for(int i=0; i<25; i++) {
 			envioEmailService.produzirNovaMensagem();
 		}
 	}
