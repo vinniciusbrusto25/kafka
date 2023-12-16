@@ -68,6 +68,9 @@ public class DetectarFraudeService {
         //Qualquer outro consumer é um grupo distinto (email, log, etc...)
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, DetectarFraudeService.class.getSimpleName());
 
+        //Quero consumir no máximo 1 record por vez
+        properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
+
         return properties;
     }
 }
